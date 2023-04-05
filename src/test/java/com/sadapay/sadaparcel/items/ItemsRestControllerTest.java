@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = {ItemsRestControllerTest.class})
+@WebMvcTest(controllers = {ItemsRestController.class})
 public class ItemsRestControllerTest {
     @Autowired
     MockMvc mockMvc;

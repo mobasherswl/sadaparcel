@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest()
 class ItemsServiceTest {
     @Autowired
     ItemsRepository itemsRepository;
