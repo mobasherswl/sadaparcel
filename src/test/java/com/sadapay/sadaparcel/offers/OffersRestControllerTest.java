@@ -1,7 +1,6 @@
-package com.sadapay.sadaparcel.items;
+package com.sadapay.sadaparcel.offers;
 
-import com.sadapay.sadaparcel.api.model.items.Item;
-import com.sadapay.sadaparcel.api.model.items.Line;
+import com.sadapay.sadaparcel.api.model.offers.Offer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +20,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = {ItemsRestControllerTest.class})
-public class ItemsRestControllerTest {
+@WebMvcTest(controllers = {OffersRestController.class})
+public class OffersRestControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockBean
-    ItemsService itemsService;
+    OffersService offersService;
 
     @Test
-    void getAllItems() throws Exception {
-        List<Line> lines = List.of(
-                new Line(new Item().id("1").name("item 1").price(BigDecimal.TEN).description("desc 1"), 2),
-                new Line(new Item().id("2").name("item 2").price(BigDecimal.ONE).description("desc 2"), 5));
+    void getAllOffers() throws Exception {
+        List<Offer> lines = List.of(
+                new Offer("id 1", "offer 1", "desc 1", "itemId 1", BigDecimal.ONE, 2),
+                new Offer("id 1", "offer 1", "desc 1", "itemId 1", BigDecimal.ONE, 2));
 
-        when(itemsService.getAll()).thenReturn(lines);
+        when(offersService.getAll()).thenReturn(lines);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/items").contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.lines", hasSize(2))).andDo(print());
+                MockMvcRequestBuilders.get("/offers").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(jsonPath("$.offers", hasSize(2))).andDo(print());
     }
 }
