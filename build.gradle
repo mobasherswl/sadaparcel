@@ -1,12 +1,57 @@
+import static groovy.io.FileType.FILES
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
 	id 'org.springframework.boot' version '2.5.1'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'org.openapi.generator' version '6.5.0'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+
+def fileList = []
+def taskList = []
+def dir = new File("$rootDir/specs/".toString())
+
+dir.eachFileRecurse(FILES) { file ->
+	if (file.getName().endsWith(".yaml"))
+		fileList << file
+}
+
+fileList.each {
+	println it.path
+	def apiName = it.getName().replace(".yaml", "")
+
+	taskList << "openApiGenerate-" + apiName.capitalize()
+	tasks.create("openApiGenerate-" + apiName.capitalize(), GenerateTask.class, {
+		generatorName = "spring"
+		inputSpec = "$rootDir/specs/".toString() + "${apiName}.yaml"
+		outputDir = "$buildDir/generated/openapi".toString()
+		apiPackage = "com.sadapay.sadaparcel.api.definition.".toString() + "${apiName.replace("-api.v1", ""). replace("-", "")}"
+		modelPackage = "com.sadapay.sadaparcel.api.model.".toString() + "${apiName.replace("-api.v1", ""). replace("-", "")}"
+		skipValidateSpec = true
+		configOptions = [
+				dateLibrary: "java8",
+				delegatePattern: "true",
+				interfaceOnly: "true"
+		]
+	})
+}
+print 'added tasks: '+taskList
+
+compileJava.dependsOn taskList
+
+sourceSets {
+	main {
+		java {
+			srcDir("$buildDir/generated/openapi/src/gen/java")
+			srcDir("$buildDir/generated/openapi/src/main/java")
+		}
+	}
+}
 
 repositories {
 	mavenCentral()
@@ -14,9 +59,11 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-test {
-	useJUnitPlatform()
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	implementation 'org.openapitools:openapi-generator-gradle-plugin:6.5.0'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+	implementation group: 'io.swagger.core.v3', name: 'swagger-models', version: '2.2.8'
+	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.8'
 }
