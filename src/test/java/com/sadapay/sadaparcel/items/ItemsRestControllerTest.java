@@ -2,7 +2,6 @@ package com.sadapay.sadaparcel.items;
 
 import com.sadapay.sadaparcel.api.model.items.Item;
 import com.sadapay.sadaparcel.api.model.items.Line;
-import com.sadapay.sadaparcel.items.ItemsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +37,6 @@ public class ItemsRestControllerTest {
         when(itemsService.getAll()).thenReturn(lines);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/items").contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$", hasSize(2))).andDo(print());
+        ).andExpect(jsonPath("$.lines", hasSize(2))).andDo(print());
     }
 }
